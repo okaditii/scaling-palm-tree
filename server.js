@@ -1,11 +1,8 @@
-//to start server in root directory
+const app = require('./src/app')
+const connectDB = require('./src/db/db')
 
-const app = require('./src/app');
-
-app.get('/',(req,res)=>{
-    res.send('Hello World!');
-})
+connectDB()
 
 app.listen(3000,()=>{
-    console.log('Server is running on port 3000');
+    console.log('Server is running on port 3000')
 })

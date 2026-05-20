@@ -1,14 +1,47 @@
-// app.js to create server inside src
+const express = require('express')
+const noteModel = require('./models/note.model')
 
-const express = require('express');
-const app = express();
+const app = express()
 
-app.use(express.json());  // to parse json data from request body
+//POST - ADDING A NEW NOTE
+app.post('/notes', async (req,res) => {
+    const data = req.body
+    await noteModel.create(data)({
+        title:data.title,
+        description:data.description
+    })
 
-const notes = []
-
-app.post('/notes',(req,res)=>{
-    console.log(req.body);   // data comes in req.body 
+    res.send("Note added successfully")
 })
 
-module.exports = app;
+app.get('/notes', async(req,res)=>{
+    const notes =await noteModel.find()
+    res.send.json({
+        message:"Notes fetched successfully",
+        notes:notes 
+    })
+})
+
+app.delete('/notes/:id', async(req,res)=>{
+    const id = req.params.id
+    const note = await noteModel.findOneAndDelete({ 
+        _id: id 
+    })
+    res.status(200).json({
+        message: "Note deleted successfully"
+    })
+})
+
+app.patch('/notes/:id', async(req,res)=>{
+    const id = req.params.id
+    const description = req.body.description
+    const note = await noteModel.findOneAndUpdate({
+        _id: id 
+    },{description: description})
+
+    res.status(200).json({
+        message: "Note updated successfully",
+    })
+})
+
+module.exports = app
